@@ -1,10 +1,10 @@
 const admin = require("firebase-admin");
 
-const { Client } = require("discord.js");
+const Discord = require("discord.js");
 const cron = require("node-cron");
 require("dotenv").config();
 const axios = require("axios");
-const client = new Client();
+const client = new Discord.Client();
 const token = process.env.DISCORD_TOKEN;
 
 admin.initializeApp({
@@ -39,12 +39,49 @@ client.on("message", async (msg) => {
 
 client.login(token);
 
-cron.schedule("* * * * * *", async () => {
+cron.schedule("*/10 * * * * *", async () => {
+  const channel = await client.channels.fetch("1005819350684532787");
+  const quaverDoc = db.collection("personal").doc("quaver");
   const songAmount = await axios(
     "https://api.quavergame.com/v1/mapsets/ranked"
   ).then((resp) => resp.data.mapsets.length);
   const user = await getPlayerStats();
-  db.collection("personal").doc("quaver").set(user);
+  const dbUser = (await quaverDoc.get()).data();
+  const date = new Date();
+  if (
+    user.globalRank !== dbUser.globalRank &&
+    dbUser.timestamp - user.timestamp > 3600000
+  ) {
+    const embed = new Discord.MessageEmbed()
+      .setTitle(
+        `You've improved! (${((date.getHours() - 1) % 12) + 1}:${
+          date.getMinutes() < 10 ? "0" : ""
+        }${date.getMinutes()} ${date.getHours >= 12 ? "PM" : "AM"})`
+      )
+      .setDescription(
+        `Here are your stats over the last ${
+          (Date.now() - dbUser.timestamp) / 1000 / 60 / 60
+        } hours.`
+      )
+      .setColor("#aa00ff")
+      .setFooter("Bot built by Aidan Hsiao.")
+      .addFields(
+        {
+          name: "Global Rank",
+          value: `#${dbUser.globalRank} -> #${user.globalRank}`,
+          inline: true,
+        },
+        {
+          name: "Country Rank",
+          value: `#${dbUser.countryRank} -> #${user.countryRank}`,
+          inline: true,
+        }
+      );
+    channel.send(embed);
+  }
+  user.rankedSongAmount = songAmount;
+  user.timestamp = Date.now();
+  quaverDoc.set(user);
 });
 
 async function getPlayerStats() {
