@@ -57,12 +57,12 @@ cron.schedule("*/30 * * * * *", async () => {
   ).then((resp) => resp.data.mapsets.length);
   const user = await getPlayerStats();
   const dbUser = (await quaverDoc.get()).data();
-  console.log(user, dbUser);
   const date = new Date();
   if (
     user.globalRank !== dbUser.globalRank &&
-    dbUser.timestamp - user.timestamp > 3600000
+    Date.now() - dbUser.timestamp > 3600000
   ) {
+    const hours = (Date.now() - dbUser.timestamp) / 1000 / 60 / 60;
     const embed = new Discord.MessageEmbed()
       .setTitle(
         `You've improved! (${((date.getHours() - 1) % 12) + 1}:${
@@ -70,9 +70,9 @@ cron.schedule("*/30 * * * * *", async () => {
         }${date.getMinutes()} ${date.getHours >= 12 ? "PM" : "AM"})`
       )
       .setDescription(
-        `Here are your stats over the last ${
-          (Date.now() - dbUser.timestamp) / 1000 / 60 / 60
-        } hours.`
+        `Here are your stats over the last ${hours.toFixed(1)} hour${
+          hours !== 1 ? "s" : ""
+        }.`
       )
       .setColor("#aa00ff")
       .setFooter("Bot built by Aidan Hsiao.")
