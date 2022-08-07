@@ -58,9 +58,19 @@ cron.schedule("*/30 * * * * *", async () => {
   const user = await getPlayerStats();
   const dbUser = (await quaverDoc.get()).data();
   const date = new Date();
+  const secondsPassed = (Date.now() - dbUser.timestamp()) / 1000;
+  const dhms = [];
+  for (let i = 3; i >= 0; i--) {
+    const value = (secondsPassed % (60 ^ (i + 1))) / (60 ^ i);
+    dhms.push(Math.floor(value));
+  }
+  const dhmsNames = "day hour minute second".split("|");
+  const dhmsText = dhms
+    .map((value, idx) => `${value} ${dhmsNames[idx]}${value !== 1 && "s"}`)
+    .join(" ");
   if (
     user.globalRank !== dbUser.globalRank &&
-    Date.now() - dbUser.timestamp > 3600000
+    Date.now() - (dbUser.timestamp || 0) > 3600000
   ) {
     const hours = (Date.now() - dbUser.timestamp) / 1000 / 60 / 60;
     const embed = new Discord.MessageEmbed()
