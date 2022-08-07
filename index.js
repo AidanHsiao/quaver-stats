@@ -62,6 +62,7 @@ cron.schedule("*/30 * * * * *", async () => {
     user.globalRank !== dbUser.globalRank &&
     dbUser.timestamp - user.timestamp > 3600000
   ) {
+    user.timestamp = Date.now();
     const embed = new Discord.MessageEmbed()
       .setTitle(
         `You've improved! (${((date.getHours() - 1) % 12) + 1}:${
@@ -95,7 +96,6 @@ cron.schedule("*/30 * * * * *", async () => {
     );
   }
   user.rankedSongAmount = songAmount;
-  user.timestamp = Date.now();
   user.rankedSongCheck = dbUser.rankedSongCheck;
   quaverDoc.set(user);
 });
