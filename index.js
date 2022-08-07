@@ -58,16 +58,22 @@ cron.schedule("*/30 * * * * *", async () => {
   const user = await getPlayerStats();
   const dbUser = (await quaverDoc.get()).data();
   const date = new Date();
-  const secondsPassed = (Date.now() - dbUser.timestamp()) / 1000;
+  const secondsPassed = (Date.now() - dbUser.timestamp) / 1000;
   const dhms = [];
   for (let i = 3; i >= 0; i--) {
-    const value = (secondsPassed % (60 ^ (i + 1))) / (60 ^ i);
+    const value = (secondsPassed % 60 ** (i + 1)) / 60 ** i;
     dhms.push(Math.floor(value));
   }
-  const dhmsNames = "day hour minute second".split("|");
+  const dhmsNames = "day|hour|minute|second".split("|");
   const dhmsText = dhms
-    .map((value, idx) => `${value} ${dhmsNames[idx]}${value !== 1 && "s"}`)
-    .join(" ");
+    .map(
+      (value, idx) =>
+        `${idx === 3 ? "and" : ""} ${value} ${dhmsNames[idx]}${
+          value !== 1 ? "s" : ""
+        }`
+    )
+    .join(", ");
+  console.log(user, dbUser);
   if (
     user.globalRank !== dbUser.globalRank &&
     Date.now() - (dbUser.timestamp || 0) > 3600000
@@ -79,11 +85,7 @@ cron.schedule("*/30 * * * * *", async () => {
           date.getMinutes() < 10 ? "0" : ""
         }${date.getMinutes()} ${date.getHours >= 12 ? "PM" : "AM"})`
       )
-      .setDescription(
-        `Here are your stats over the last ${hours.toFixed(1)} hour${
-          hours !== 1 ? "s" : ""
-        }.`
-      )
+      .setDescription(`Here are your stats over the last ${dhmsText}.`)
       .setColor("#aa00ff")
       .setFooter("Bot built by Aidan Hsiao.")
       .addFields(
