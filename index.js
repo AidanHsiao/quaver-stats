@@ -62,7 +62,6 @@ cron.schedule("*/30 * * * * *", async () => {
     user.globalRank !== dbUser.globalRank &&
     dbUser.timestamp - user.timestamp > 3600000
   ) {
-    user.timestamp = Date.now();
     const embed = new Discord.MessageEmbed()
       .setTitle(
         `You've improved! (${((date.getHours() - 1) % 12) + 1}:${
@@ -96,15 +95,16 @@ cron.schedule("*/30 * * * * *", async () => {
         }
       );
     channel.send(embed);
+    user.timestamp = Date.now();
+    user.rankedSongAmount = songAmount;
+    user.rankedSongCheck = dbUser.rankedSongCheck;
+    quaverDoc.set(user);
   }
   if (songAmount !== dbUser.rankedSongAmount && dbUser.rankedSongCheck) {
     channel.send(
       "<@302942608676880385> NEW RANKED SONG IS OUT TIME TO FARM\n`Use !toggleranked to disable me.`"
     );
   }
-  user.rankedSongAmount = songAmount;
-  user.rankedSongCheck = dbUser.rankedSongCheck;
-  quaverDoc.set(user);
 });
 
 async function getPlayerStats() {
