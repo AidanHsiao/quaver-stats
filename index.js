@@ -41,7 +41,7 @@ client.on("message", async (msg) => {
       const quaverDoc = db.collection("personal").doc("quaver");
       const currentStatus = (await quaverDoc.get()).data().rankedSongCheck;
       quaverDoc.update({ rankedSongCheck: !currentStatus });
-      msg.channel.send(`Ranked Song Check Set To: ${!currentStatus}.`);
+      msg.channel.send(`Ranked song check set to ${!currentStatus}.`);
       break;
     }
   }
@@ -49,7 +49,7 @@ client.on("message", async (msg) => {
 
 client.login(token);
 
-cron.schedule("*/10 * * * * *", async () => {
+cron.schedule("*/30 * * * * *", async () => {
   const channel = await client.channels.fetch("1005819350684532787");
   const quaverDoc = db.collection("personal").doc("quaver");
   const songAmount = await axios(
