@@ -57,6 +57,7 @@ cron.schedule("*/30 * * * * *", async () => {
   ).then((resp) => resp.data.mapsets.length);
   const user = await getPlayerStats();
   const dbUser = (await quaverDoc.get()).data();
+  console.log(user, dbUser);
   const date = new Date();
   if (
     user.globalRank !== dbUser.globalRank &&
