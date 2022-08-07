@@ -86,6 +86,13 @@ cron.schedule("*/30 * * * * *", async () => {
           name: "Country Rank",
           value: `#${dbUser.countryRank} -> #${user.countryRank}`,
           inline: true,
+        },
+        {
+          name: "Global Percentile",
+          value: `${dbUser.globalPercent.toFixed(
+            3
+          )}% -> ${user.globalPercent.toFixed(3)}%`,
+          inline: true,
         }
       );
     channel.send(embed);
