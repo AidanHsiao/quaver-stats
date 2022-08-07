@@ -104,6 +104,7 @@ cron.schedule("*/30 * * * * *", async () => {
     channel.send(
       "<@302942608676880385> NEW RANKED SONG IS OUT TIME TO FARM\n`Use !toggleranked to disable me.`"
     );
+    quaverDoc.update({ rankedSongAmount: songAmount });
   }
 });
 
