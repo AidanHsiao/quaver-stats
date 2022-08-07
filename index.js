@@ -1,8 +1,8 @@
 const { Client } = require("discord.js");
+require("dotenv").config();
 const axios = require("axios");
 const client = new Client();
-const token =
-  "MTAwNTgwNDQ2MDIzNDI2MDYwMg.GhfK6-.iUyro4m3gnUC4SZEeOiOlTcmp3QzHbJ3RIn1Vk";
+const token = process.env.DISCORD_TOKEN;
 
 client.on("ready", () => console.log("Bot Ready!"));
 

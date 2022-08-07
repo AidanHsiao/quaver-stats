@@ -19,6 +19,7 @@
   "homepage": "https://github.com/AidanHsiao/quaver-stats#readme",
   "dependencies": {
     "axios": "^0.27.2",
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "dotenv": "^16.0.1"
   }
 }
