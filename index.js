@@ -21,19 +21,29 @@ client.on("ready", () => console.log("Bot Ready!"));
 
 client.on("message", async (msg) => {
   if (msg.author.bot) return;
-  if (msg.content === "!quaver") {
-    msg.react("👍");
-    const user = await getPlayerStats();
-    const lines = `\`\`\`Global Peak [b]#${
-      user.globalRank
-    } (Top ${user.globalPercent.toFixed(3)}%)[/b]\nUSA Peak [b]#${
-      user.countryRank
-    } (Top ${user.countryPercent.toFixed(
-      3
-    )}%)[/b]\`\`\`Paste this into the showcase.`;
-    const sentMessage = await msg.channel.send(lines);
-    setTimeout(() => sentMessage.delete(), 10000);
-    msg.delete();
+  switch (msg.content) {
+    case "!quaver": {
+      msg.react("👍");
+      const user = await getPlayerStats();
+      const lines = `\`\`\`Global Peak [b]#${
+        user.globalRank
+      } (Top ${user.globalPercent.toFixed(3)}%)[/b]\nUSA Peak [b]#${
+        user.countryRank
+      } (Top ${user.countryPercent.toFixed(
+        3
+      )}%)[/b]\`\`\`Paste this into the showcase.`;
+      const sentMessage = await msg.channel.send(lines);
+      setTimeout(() => sentMessage.delete(), 10000);
+      msg.delete();
+      break;
+    }
+    case "!toggleranked": {
+      const quaverDoc = db.collection("personal").doc("quaver");
+      const currentStatus = (await quaverDoc.get()).data().rankedSongCheck;
+      quaverDoc.update({ rankedSongCheck: !currentStatus });
+      msg.channel.send(`Ranked Song Check Set To: ${!currentStatus}.`);
+      break;
+    }
   }
 });
 
@@ -79,8 +89,14 @@ cron.schedule("*/10 * * * * *", async () => {
       );
     channel.send(embed);
   }
+  if (songAmount !== dbUser.rankedSongAmount && dbUser.rankedSongCheck) {
+    channel.send(
+      "<@302942608676880385> NEW RANKED SONG IS OUT TIME TO FARM\n`Use !toggleranked to disable me.`"
+    );
+  }
   user.rankedSongAmount = songAmount;
   user.timestamp = Date.now();
+  user.rankedSongCheck = dbUser.rankedSongCheck;
   quaverDoc.set(user);
 });
 
