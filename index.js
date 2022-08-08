@@ -89,7 +89,7 @@ cron.schedule("*/30 * * * * *", async () => {
           user.globalRank > dbUser.globalRank ? "gone down." : "improved!"
         } (${((date.getHours() - 1) % 12) + 1}:${
           date.getMinutes() < 10 ? "0" : ""
-        }${date.getMinutes()} ${date.getHours >= 12 ? "PM" : "AM"})`
+        }${date.getMinutes()} ${date.getHours() >= 12 ? "PM" : "AM"})`
       )
       .setDescription(`Here are your stats over the last ${dhmsText}.`)
       .setColor("#aa00ff")
