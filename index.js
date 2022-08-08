@@ -31,7 +31,11 @@ client.on("message", async (msg) => {
         user.countryRank
       } (Top ${user.countryPercent.toFixed(
         3
-      )}%)[/b]\`\`\`Paste this into the showcase.`;
+      )}%)[/b]\n\n[h2]➤ Stats[/h2]\nOverall Rating: [b]${
+        user.performanceRating
+      }[/b]\nOverall Accuracy: [b]${
+        user.overallAccuracy
+      }%[/b]\`\`\`Paste this into the showcase.`;
       const sentMessage = await msg.channel.send(lines);
       setTimeout(() => sentMessage.delete(), 10000);
       msg.delete();
@@ -138,5 +142,8 @@ async function getPlayerStats() {
     countryRank: user.countryRank,
     globalPercent: (user.globalRank / userCount) * 100,
     countryPercent: (user.countryRank / countryCount) * 100,
+    performanceRating:
+      Math.round(user.stats.overall_performance_rating * 100) / 100,
+    overallAccuracy: Math.round(user.stats.overall_accuracy * 100) / 100,
   };
 }
