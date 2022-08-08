@@ -81,7 +81,9 @@ cron.schedule("*/30 * * * * *", async () => {
     const hours = (Date.now() - dbUser.timestamp) / 1000 / 60 / 60;
     const embed = new Discord.MessageEmbed()
       .setTitle(
-        `You've improved! (${((date.getHours() - 1) % 12) + 1}:${
+        `You've ${
+          user.globalRank > dbUser.globalRank ? "gone down." : "improved!"
+        } (${((date.getHours() - 1) % 12) + 1}:${
           date.getMinutes() < 10 ? "0" : ""
         }${date.getMinutes()} ${date.getHours >= 12 ? "PM" : "AM"})`
       )
